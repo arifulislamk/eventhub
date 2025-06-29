@@ -6,7 +6,6 @@ const Main = () => {
     return (
         <div>
             <Navbar />
-            <Home />
             <Outlet />
         </div>
     );

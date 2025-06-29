@@ -14,7 +14,7 @@ const Navbar = () => {
         <NavLink to="/add-event">Add Event</NavLink>
       </li>
       <li>
-        <NavLink to="/my-event">MY Event</NavLink>
+        <NavLink to="/my-events">MY Event</NavLink>
       </li>
     </>
   );

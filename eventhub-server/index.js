@@ -50,7 +50,7 @@ async function run() {
     // // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     const allUserData = client.db("eventhubDB").collection("allUser");
-    // const other = client.db("eventhubDB").collection("other");
+    const events = client.db("eventhubDB").collection("event");
 
     app.post("/register", async (req, res) => {
       const info = req.body;
@@ -89,6 +89,12 @@ async function run() {
       const result = await allUserData.findOne({ email });
       res.send(result);
     });
+
+     app.post('/event', authenticateJWT, async (req, res) => {
+            const event = req.body
+            const result = await events.insertOne(event)
+            res.send(result)
+        })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });

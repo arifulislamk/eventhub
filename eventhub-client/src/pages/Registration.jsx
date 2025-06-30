@@ -1,7 +1,24 @@
-import { Link } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import useCommonAxios from "../hooks/useCommonAxios";
 
 const Registration = () => {
+  const commonAxios = useCommonAxios();
+  const navigate = useNavigate();
+
+  const { mutateAsync } = useMutation({
+    mutationFn: async (info) => {
+      const { data } = await commonAxios.post("/register", info);
+      return data;
+    },
+    onSuccess: () => {
+      console.log("User Create Succesful");
+      toast.success("User Create Succesful");
+      navigate("/login");
+    },
+  });
+
   const handleRegister = async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -9,8 +26,15 @@ const Registration = () => {
     const email = form.email.value;
     const password = form.password.value;
     const photourl = form.photourl.value;
-    console.log( name, password, email,photourl );
-   
+    console.log(name, password, email, photourl);
+
+    try {
+      const info = { name, password, email, photourl};
+      mutateAsync(info);
+    } catch (err) {
+      console.log(err);
+      toast.error(err.message);
+    }
   };
   return (
     <div>
@@ -35,7 +59,9 @@ const Registration = () => {
               </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text   font-bold text-base">Email</span>
+                  <span className="label-text   font-bold text-base">
+                    Email
+                  </span>
                 </label>
                 <input
                   type="email"
@@ -47,7 +73,9 @@ const Registration = () => {
               </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text   font-bold text-base">Password</span>
+                  <span className="label-text   font-bold text-base">
+                    Password
+                  </span>
                 </label>
                 <input
                   type="pin"
@@ -59,7 +87,9 @@ const Registration = () => {
               </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text   font-bold text-base">PhotoURL</span>
+                  <span className="label-text   font-bold text-base">
+                    PhotoURL
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -70,7 +100,9 @@ const Registration = () => {
                 />
               </div>
               <div className="form-control mt-2">
-                <button className="btn text-base hover:bg-cyan-300s rounded-b-2xl font-extrabold">Register</button>
+                <button className="btn text-base hover:bg-cyan-300s rounded-b-2xl font-extrabold">
+                  Register
+                </button>
               </div>
               <p>
                 Already have an account?{" "}

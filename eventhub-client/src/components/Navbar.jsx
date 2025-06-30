@@ -1,7 +1,27 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
-import logo from "../../public/logo1.png"
+import logo from "../../public/logo1.png";
+import { useQuery } from "@tanstack/react-query";
+import useSecureAxios from "../hooks/useSecureAxios";
 const Navbar = () => {
+  const email = localStorage.getItem("email");
+  const secureAxios = useSecureAxios();
+    const reloadPage = () => {
+    window.location.reload();
+  };
+
+  const { data: users } = useQuery({
+    queryKey: ["email"],
+    queryFn: async () => {
+      const { data } = await secureAxios(`/user/${email}`);
+      return data;
+    },
+  });
+  console.log(users,"ujsdf") ;
+   const logout = () => {
+    localStorage.clear();
+    reloadPage();
+  };
   const navItems = (
     <>
       <li>
@@ -48,13 +68,51 @@ const Navbar = () => {
             </ul>
           </div>
           <img className=" w-1/16 rounded-xl" src={logo}></img>
-          <Link to="/" className="  font-bold px-1 text-xl">EventHub</Link>
+          <Link to="/" className="  font-bold px-1 text-xl">
+            EventHub
+          </Link>
         </div>
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">{navItems}</ul>
         </div>
         <div className="navbar-end">
-          <Link to="/login" className="btn">Sign In</Link>
+          {email ? (
+            <>
+              <div className="z-50 dropdown dropdown-bottom dropdown-end">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className=" flex justify-center items-center  mr-3 gap-3 m-1"
+                >
+                  <img
+                    className=" w-12 h-12 rounded-full"
+                    referrerPolicy="no-referrer"
+                    src={users?.photourl}
+                    alt=""
+                  />
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+                >
+                  <li>
+                    <Link>
+                      {users?.name
+                        ? users?.name
+                        : "No Name Available"}
+                    </Link>
+                  </li>
+                  <p className=" mt-6 ml-6 text-red-700 font-medium">
+                    <Link onClick={logout}>LogOut</Link>
+                  </p>
+                </ul>
+              </div>
+            </>
+          ) : (
+            <Link to="/login" className="btn">
+              Sign IN
+            </Link>
+          )}
         </div>
       </div>
     </div>

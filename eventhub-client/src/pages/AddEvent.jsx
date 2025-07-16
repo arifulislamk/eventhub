@@ -41,7 +41,7 @@ const AddEvent = () => {
         try {
             setLoading(true)
 
-            const eventData = { ...formData, participantCount: parseInt(0), dateAndTime: startDate, AddedEmail: email, }
+            const eventData = { ...formData, attendeeCount: parseInt(0), dateTime: startDate, AddedEmail: email, unique: Date.now() }
 
             // post a camps 
             mutateAsync(eventData)

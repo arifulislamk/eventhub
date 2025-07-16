@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const cors = require("cors");
@@ -90,12 +90,51 @@ async function run() {
       res.send(result);
     });
 
-     app.post('/event', authenticateJWT, async (req, res) => {
-            const event = req.body
-            const result = await events.insertOne(event)
-            res.send(result)
-        })
+    app.post("/event", authenticateJWT, async (req, res) => {
+      const event = req.body;
+      const result = await events.insertOne(event);
+      res.send(result);
+    });
 
+    // app.get("/events", async (req, res) => {
+    //   const result = await events.find().toArray();
+    //   res.send(result);
+    // });
+    app.get("/events", async (req, res) => {
+      const search = req.query.search;
+      const date = req.query.date;
+      const attendeeCount = req.query.attendeeCount;
+      const filter = {
+        $or: [
+          { eventName: { $regex: search, $options: "i" } },
+          { name: { $regex: search, $options: "i" } },
+          { location: { $regex: search, $options: "i" } },
+          { description: { $regex: search, $options: "i" } },
+        ],
+      };
+      let options = {};
+      if (attendeeCount)
+        options = {
+          sort: { attendeeCount: attendeeCount === "asc" ? 1 : -1 },
+        };
+      if (date) options = { sort: { dateTime: date === "asc" ? 1 : -1 } };
+
+      const result = await events.find(filter, options).toArray();
+      res.send(result);
+    });
+    app.patch("/event/attendeecount/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id : new ObjectId(id) };
+      const data = await events.findOne(filter) ;
+        // console.log(id, data);
+      const updateDoc = {
+        $set: {
+          attendeeCount: data?.attendeeCount + 1,
+        },
+      };
+      const result = await events.updateOne(filter, updateDoc);
+      res.send(result);
+    });
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(

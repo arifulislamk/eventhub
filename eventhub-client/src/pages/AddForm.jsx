@@ -61,7 +61,7 @@ const AddForm = ({
               <DatePicker
                 dateFormat="dd/MM/YYYY"
                 className=" border w-[90%] light:border-gray-500 p-2 text-xl rounded-lg"
-                name="expiredDate"
+                name="dateTime"
                 selected={startDate}
                 onChange={(date) => setStartDate(date)}
               />
@@ -107,12 +107,12 @@ const AddForm = ({
                 </span>
               </label>
               <input
-                // {...register('participantCount')}
+                // {...register('attendeeCount')}
                 readOnly
                 defaultValue={0}
                 id="number"
                 type="number"
-                name="participantCount"
+                name="attendeeCount"
                 className="input input-bordered"
                 required
               />

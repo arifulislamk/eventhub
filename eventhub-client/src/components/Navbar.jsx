@@ -17,7 +17,7 @@ const Navbar = () => {
       return data;
     },
   });
-  console.log(users,"ujsdf") ;
+  // console.log(users,"user ache") ;
    const logout = () => {
     localStorage.clear();
     reloadPage();
